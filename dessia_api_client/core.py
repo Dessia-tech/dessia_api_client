@@ -403,9 +403,16 @@ class Client:
         print('Let empty to abort.')
         confirm = input()
         if confirm == validator:
+            count = 0
             for object_ in objects:
-                self.delete_object(object_['object_class'], object_['id'])
-            print('All {} objects successfully deleted'.format(len(objects)))
+                r = self.delete_object(object_['object_class'], object_['id'])
+                if r.status_code in [200, 201]:
+                    count += 1
+            if count == len(objects):
+                print('All {} objects successfully deleted'.format(count))
+            elif count < len(objects):
+                print('Only {} / {} objects deleted. ',
+                      'This might be due to amount of requests limitations')
         elif not confirm:
             print('Deletion aborted')
         else:
