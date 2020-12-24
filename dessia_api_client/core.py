@@ -341,7 +341,7 @@ class Client:
                       embedded_subobjects: bool = False, owner=None):
         data = {'object': {'object_class': object_class,
                            'json': StringifyDictKeys(new_object.to_dict())},
-                'embedded_subobjects' : embedded_subobjects}
+                'embedded_subobjects': embedded_subobjects}
         if owner is not None:
             data['owner'] = owner
         url = '{}/objects/{}/{}/replace'
@@ -777,11 +777,10 @@ class AdminClient(Client):
         if not data:
             print('Empty data, no need to fire a request')
             return None
-        
-        return requests.post('{}/admin/users/{}'.format(self.api_url, user_id),
-                             headers=self.auth_header,
-                             proxies=self.proxies,
-                             json=data)
+
+        url = '{}/admin/users/{}'
+        return requests.post(url.format(self.api_url, user_id), json=data,
+                             headers=self.auth_header, proxies=self.proxies)
 
     def add_computation_usage(self, owner: str, time: float):
         data = {'owner': owner, 'time': time}
