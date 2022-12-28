@@ -44,7 +44,7 @@ from dessia_api_client.clients import PlatformApiClient
 from matplotlib.cm import get_cmap
 
 try:
-    import dessia_common as dc
+    import dessia_common.core as dc
 except ModuleNotFoundError:
     msg = 'Dessia common module could not be found.\n'
     msg += 'It is required for object handling.'
@@ -75,26 +75,18 @@ class ObjectsEndPoint:
                                path_subs={'object_class': object_class,
                                           'object_id': object_id})
 
-    def get_subobject(self, object_class: str,
-                      object_id: str,
-                      deep_attribute: str = None,
-                      instantiate: bool = True):
-
+    def get_subobject(self, object_class: str, object_id: str, deep_attribute: str = None, instantiate: bool = True):
         payload = {'embedded_subobjects': str(instantiate).casefold()}
-
-        req = self.client.get(f'/objects/{object_class}/{object_id}/{deep_attribute}',
-                              params=payload)
+        req = self.client.get(f'/objects/{object_class}/{object_id}/{deep_attribute}', params=payload)
         if instantiate:
             result = req.json()
             if dc.is_sequence(result):
                 return [instantiate_object(v) for v in result]
-            else:
-                return instantiate_object(result)
+            return instantiate_object(result)
         return req
 
     def _wait_for_object_created(self, payload):
-        r = self.client.post('/objects',
-                             json=payload)
+        r = self.client.post('/objects', json=payload)
         try:
             rj = r.json()
         except simplejson.errors.JSONDecodeError:
@@ -189,19 +181,23 @@ class ObjectsEndPoint:
         Gets class attributes
         (_standalone_in_db, _jsonschema, and other class data)
         """
-        return self.client.get('/objects/{class_}/attributes',
-                               path_subs={'class_': class_})
+        return self.client.get('/objects/{class_}/attributes', path_subs={'class_': class_})
 
-    def get_object(self, object_class: str, object_id: str,
-                   instantiate: bool = True, embedded_subobjects=True):
+    def get_object(self, object_class: str, object_id: str, instantiate: bool = True, embedded_subobjects=True):
         if instantiate and not embedded_subobjects:
             raise ValueError('embedded_subobjects must be set to True when instantiating')
         payload = {'embedded_subobjects': str(embedded_subobjects).casefold()}
 
-        r = self.client.get('/objects/{object_class}/{object_id}',
-                            params=payload,
-                            path_subs={'object_id': object_id, 'object_class': object_class})
-        if instantiate and r.status_code == 200:
+        r = self.client.get('/objects/{object_id}', params=payload, path_subs={'object_id': object_id})
+        if r.status_code == 200:
+            if instantiate:
+                return instantiate_object(r.json())
+            return r
+
+        # Retro Compat backend < 0.14.3
+        r = self.client.get('/objects/{object_class}/{object_id}', params=payload,
+                            path_subs={'object_id': object_id, "object_class": object_class})
+        if r.status_code == 200 and instantiate:
             return instantiate_object(r.json())
         return r
 
