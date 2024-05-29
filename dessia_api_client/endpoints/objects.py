@@ -41,7 +41,6 @@ import matplotlib.pyplot as plt
 from dessia_api_client.utils.helpers import stringify_dict_keys, instantiate_object, confirm
 from dessia_api_client.utils.filters import EqualityFilter
 from dessia_api_client.clients import PlatformApiClient
-from matplotlib.cm import get_cmap
 
 try:
     import dessia_common as dc
