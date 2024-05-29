@@ -8,7 +8,7 @@ class PlatformUser:
                  email=None,
                  password=None,
                  api_url="https://api.platform.dessia.tech",
-                 max_retries=3,
+                 max_retries=30,
                  retry_interval=3):
         """
         :param email:
