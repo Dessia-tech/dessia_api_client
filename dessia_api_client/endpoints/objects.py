@@ -30,16 +30,9 @@
 
 """
 
-import time
 import simplejson.errors
-import jwt
 import time
-import getpass
-import warnings
-import requests
-import matplotlib.pyplot as plt
 from dessia_api_client.utils.helpers import stringify_dict_keys, instantiate_object, confirm
-from dessia_api_client.utils.filters import EqualityFilter
 from dessia_api_client.clients import PlatformApiClient
 
 try:
