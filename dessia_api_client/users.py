@@ -1,8 +1,3 @@
-# import os
-# import jwt
-# import time
-# import requests
-
 from dessia_api_client.endpoints import admin, jobs, accounts, applications, files, objects, style, \
     marketplace, organisations, classes, distributions
 from dessia_api_client.clients import PlatformApiClient
@@ -13,7 +8,7 @@ class PlatformUser:
                  email=None,
                  password=None,
                  api_url="https://api.platform.dessia.tech",
-                 max_retries=3,
+                 max_retries=5,
                  retry_interval=3):
         """
         :param email:
